@@ -1,0 +1,4 @@
+{"_type": "trait", "name": "Background", "values": ["Basement", "Caves"]}
+{"_type": "trait", "name": "Type", "values": ["Human", "Toxic", "Demon"]}
+{"_type": "trait", "name": "Eyes", "values": ["Big", "Tiny", "Strange"]}
+{"_type": "trait", "name": "Mouth", "values": ["Big", "Tiny", "Strange"]}
