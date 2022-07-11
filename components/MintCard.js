@@ -1,12 +1,28 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import tw from "tailwind-styled-components";
+import { useCollection } from "../contracts/hooks/useCollection";
 
 export const MintCard = () => {
+  const { mintItem, getAvailableForMint } = useCollection();
+  const [availibleForMint, setAvailibleForMint] = useState();
+  const mintNewItem = async () => {
+    await mintItem();
+    console.log("MINTED");
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const availible = await getAvailableForMint();
+      setAvailibleForMint(availible);
+    };
+    fetchData();
+  }, []);
   return (
     <MintCardContainer>
       <MintCardContent>
+        <div>{availibleForMint} Left to MINT</div>
         <MintImage src="https://gateway.pinata.cloud/ipfs/QmbL2m5sRQZwmWc9ELSWuS4215tQ6oz8fxcRb1foSxUrvU" />
-        <MintButton>Mint</MintButton>
+        <MintButton onClick={mintNewItem}>Mint</MintButton>
         <div>Minting price : 5 FTM</div>
       </MintCardContent>
     </MintCardContainer>
@@ -14,7 +30,7 @@ export const MintCard = () => {
 };
 
 const MintCardContainer = tw.div`
-    border rounded-lg border-gray-300 py-5 text-white
+    border rounded-lg border-gray-300 py-5 dark:text-white text-black
 `;
 const MintCardContent = tw.div`
     flex flex-col items-center justify-between gap-3

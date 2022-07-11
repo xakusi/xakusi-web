@@ -14,5 +14,20 @@ export default function useSanity() {
     return result;
   };
 
-  return { getPropertiesData };
+  const getRandomItemToMint = async () => {
+    const query = `{
+      "items": *[_type == "nftItem"],
+       "total": count(*[_type == "nftItem"]) 
+  
+  }`;
+
+    const result = await client.fetch(query);
+    return result;
+  };
+
+  const deleteMintedItem = async (_id) => {
+    await client.delete(_id);
+  };
+
+  return { getPropertiesData, getRandomItemToMint, deleteMintedItem };
 }

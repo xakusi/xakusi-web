@@ -5,6 +5,8 @@ import { GiOutbackHat, GiSharpLips } from "react-icons/gi";
 import { BiLandscape } from "react-icons/bi";
 import { AiOutlineMinus, AiOutlinePlus } from "react-icons/ai";
 import useSanity from "../hooks/useSanity";
+import useResponsive from "../hooks/useResponsive";
+import { Dialog } from "@headlessui/react";
 
 const getTraitIcon = (trait) => {
   switch (trait) {
@@ -19,12 +21,19 @@ const getTraitIcon = (trait) => {
   }
 };
 
-export const GalleryFilter = () => {
+export const GalleryFilter = ({
+  allMintedItems,
+  mintedItems,
+  setMintedItems,
+  openSidebar,
+  setOpenSidebar,
+  filtersSelected,
+  setFiltersSelected,
+}) => {
   const [serialInput, setSerialInput] = useState("");
-  const [filtersSelected, setFiltersSelected] = useState([]);
   const [propertiesList, setProperties] = useState([]);
   const { getPropertiesData } = useSanity();
-
+  const { _width } = useResponsive();
   const onFilterSelection = (section, value) => {
     let sectionInserted = filtersSelected.find((f) => f.section === section);
 
@@ -35,10 +44,15 @@ export const GalleryFilter = () => {
         let removedSection = filtersSelected.filter(
           (f) => f.section !== section
         );
-        setFiltersSelected([
-          ...removedSection,
-          { section: section, values: removedFilter },
-        ]);
+
+        if (removedFilter.length === 0) {
+          setFiltersSelected([...removedSection]);
+        } else {
+          setFiltersSelected([
+            ...removedSection,
+            { section: section, values: removedFilter },
+          ]);
+        }
       } else {
         let removedFilter = sectionInserted.values.filter((f) => f !== value);
         let removedSection = filtersSelected.filter(
@@ -72,9 +86,47 @@ export const GalleryFilter = () => {
     fetchData();
   }, []);
 
-  return (
+  useEffect(() => {
+    if (filtersSelected.length > 0) {
+      let filtered = [];
+      allMintedItems?.forEach((item) => {
+        const { attributes } = item;
+        filtersSelected.forEach((filter) => {
+          const { section, values } = filter;
+          attributes.forEach((attr) => {
+            const { trait_type, value } = attr;
+            if (trait_type === section) {
+              if (values.includes(value)) {
+                filtered.push(item);
+              }
+            }
+          });
+        });
+      });
+      setMintedItems(filtered);
+    } else {
+      setMintedItems(allMintedItems);
+    }
+  }, [filtersSelected]);
+
+  useEffect(() => {
+    if (serialInput === "") {
+      setMintedItems(allMintedItems);
+    } else {
+      let filtered = [];
+      allMintedItems?.forEach((item) => {
+        item.tokenId;
+        if (item.tokenId === parseInt(serialInput)) {
+          filtered.push(item);
+        }
+      });
+      setMintedItems(filtered);
+    }
+  }, [serialInput]);
+
+  return _width > 1025 ? (
     <FilterContainer>
-      <div className="hidden lg:block relative z-10 flex items-end justify-between h-10 pb-2 border-b border-opacity-10 border-black dark:border-gray-300">
+      <div className="hidden h-14 lg:block relative z-10 flex items-end justify-between h-10 pb-2 border-b border-opacity-10 border-black dark:border-gray-300">
         <h1 className="text-xl uppercase font-extrabold tracking-tight">
           <span className="">Filter</span>
         </h1>
@@ -97,6 +149,69 @@ export const GalleryFilter = () => {
         })}
       </FilterContent>
     </FilterContainer>
+  ) : (
+    <Dialog
+      open={openSidebar}
+      onClose={() => setOpenSidebar(false)}
+      className="fixed inset-0 flex z-100 lg:hidden"
+      aria-modal="true"
+    >
+      <div
+        className="fixed inset-0 bg-white bg-opacity-50"
+        id="headlessui-dialog-overlay-97"
+        aria-hidden="true"
+      >
+        <Dialog.Panel>
+          <div className="ml-auto relative max-w-xs w-full h-screen shadow-xl py-4 pb-12 flex flex-col overflow-y-auto bg-white text-black">
+            <div className="px-4 flex items-center justify-between">
+              <h2 className="text-sm uppercase font-600 tracking-wide">
+                Filters
+              </h2>
+              <button
+                type="button"
+                className="-mr-2 w-10 rounded-md flex items-center justify-center opacity-50"
+                tabIndex="0"
+                onClick={(e) => setOpenSidebar(false)}
+              >
+                <span className="sr-only">Close menu</span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="2"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                  className="h-6 w-6"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M6 18L18 6M6 6l12 12"
+                  ></path>
+                </svg>
+              </button>
+            </div>
+            <FilterContent>
+              <SearchBySerial
+                value={serialInput}
+                onChange={(e) => setSerialInput(e.target.value)}
+              />
+              {propertiesList.map((filterItem) => {
+                return (
+                  <FilterItem
+                    key={filterItem.name}
+                    text={filterItem.name}
+                    icon={filterItem.icon}
+                    values={filterItem.values}
+                    filterSelected={onFilterSelection}
+                  />
+                );
+              })}
+            </FilterContent>
+          </div>
+        </Dialog.Panel>
+      </div>
+    </Dialog>
   );
 };
 
@@ -111,7 +226,7 @@ const SearchBySerial = (props) => {
         {...props}
         placeholder="Sort by serial..."
         id="searchbyid"
-        type="text"
+        type="number"
         className="h-full text-sm w-full z-10 focus:outline-none active:outline-none border-0 border-none bg-transparent text-black"
       />
     </label>
@@ -119,7 +234,7 @@ const SearchBySerial = (props) => {
 };
 
 const FilterContainer = tw.div`
-hidden w-1/4 col-start-1 lg:block sticky top-0 h-screen pt-32
+hidden w-1/4 col-start-1 lg:block sticky top-0 h-screen pt-32 
 `;
 
 const FilterContent = tw.div`

@@ -1,71 +1,30 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import tw from "tailwind-styled-components";
+import { useCollection } from "../contracts/hooks/useCollection";
+import { GalleryInfo } from "./GalleryInfo";
 import { GalleryItem } from "./GalleryItem";
 
-export const GalleryItems = () => {
+export const GalleryItems = ({
+  mintedItems,
+  filtersSelected,
+  setOpenSidebar,
+}) => {
   return (
     <GalleryItemsContainer>
+      <GalleryInfo
+        setOpenSidebar={setOpenSidebar}
+        selectedFilters={filtersSelected}
+      />
       <GalleryGrid>
-        <GalleryItem
-          serial={5768}
-          img="https://gateway.pinata.cloud/ipfs/QmbL2m5sRQZwmWc9ELSWuS4215tQ6oz8fxcRb1foSxUrvU"
-        />
-        <GalleryItem
-          serial={5768}
-          img="https://gateway.pinata.cloud/ipfs/QmbL2m5sRQZwmWc9ELSWuS4215tQ6oz8fxcRb1foSxUrvU"
-        />
-        <GalleryItem
-          serial={5768}
-          img="https://gateway.pinata.cloud/ipfs/QmbL2m5sRQZwmWc9ELSWuS4215tQ6oz8fxcRb1foSxUrvU"
-        />
-        <GalleryItem
-          serial={5768}
-          img="https://gateway.pinata.cloud/ipfs/QmbL2m5sRQZwmWc9ELSWuS4215tQ6oz8fxcRb1foSxUrvU"
-        />
-        <GalleryItem
-          serial={5768}
-          img="https://gateway.pinata.cloud/ipfs/QmbL2m5sRQZwmWc9ELSWuS4215tQ6oz8fxcRb1foSxUrvU"
-        />
-        <GalleryItem
-          serial={5768}
-          img="https://gateway.pinata.cloud/ipfs/QmbL2m5sRQZwmWc9ELSWuS4215tQ6oz8fxcRb1foSxUrvU"
-        />
-        <GalleryItem
-          serial={5768}
-          img="https://gateway.pinata.cloud/ipfs/QmbL2m5sRQZwmWc9ELSWuS4215tQ6oz8fxcRb1foSxUrvU"
-        />
-        <GalleryItem
-          serial={5768}
-          img="https://gateway.pinata.cloud/ipfs/QmbL2m5sRQZwmWc9ELSWuS4215tQ6oz8fxcRb1foSxUrvU"
-        />
-        <GalleryItem
-          serial={5768}
-          img="https://gateway.pinata.cloud/ipfs/QmbL2m5sRQZwmWc9ELSWuS4215tQ6oz8fxcRb1foSxUrvU"
-        />
-        <GalleryItem
-          serial={5768}
-          img="https://gateway.pinata.cloud/ipfs/QmbL2m5sRQZwmWc9ELSWuS4215tQ6oz8fxcRb1foSxUrvU"
-        />
-        <GalleryItem
-          serial={5768}
-          img="https://gateway.pinata.cloud/ipfs/QmbL2m5sRQZwmWc9ELSWuS4215tQ6oz8fxcRb1foSxUrvU"
-        />
-        <GalleryItem
-          serial={5768}
-          img="https://gateway.pinata.cloud/ipfs/QmbL2m5sRQZwmWc9ELSWuS4215tQ6oz8fxcRb1foSxUrvU"
-        />
-        <GalleryItem
-          serial={5768}
-          img="https://gateway.pinata.cloud/ipfs/QmbL2m5sRQZwmWc9ELSWuS4215tQ6oz8fxcRb1foSxUrvU"
-        />
-        <GalleryItem
-          serial={5768}
-          img="https://gateway.pinata.cloud/ipfs/QmbL2m5sRQZwmWc9ELSWuS4215tQ6oz8fxcRb1foSxUrvU"
-        />{" "}
-        <GalleryItem
-          serial={5768}
-          img="https://gateway.pinata.cloud/ipfs/QmbL2m5sRQZwmWc9ELSWuS4215tQ6oz8fxcRb1foSxUrvU"
-        />
+        {mintedItems?.map((item) => {
+          return (
+            <GalleryItem
+              key={item.tokenId}
+              serial={item.tokenId}
+              img={item.image}
+            />
+          );
+        })}
       </GalleryGrid>
     </GalleryItemsContainer>
   );
