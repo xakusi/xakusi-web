@@ -8,12 +8,14 @@ export const GalleryItems = ({
   mintedItems,
   filtersSelected,
   setOpenSidebar,
+  openNavbar,
 }) => {
   return (
     <GalleryItemsContainer>
       <GalleryInfo
         setOpenSidebar={setOpenSidebar}
         selectedFilters={filtersSelected}
+        openNavbar={openNavbar}
       />
       <GalleryGrid>
         {mintedItems?.map((item) => {

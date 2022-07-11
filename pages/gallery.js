@@ -3,21 +3,32 @@ import { useEffect, useState } from "react";
 import tw from "tailwind-styled-components";
 import { GalleryFilter } from "../components/GalleryFilter";
 import { GalleryItems } from "../components/GalleryItems";
+import { useStateContext } from "../context/StateProvider";
+import { actionTypes } from "../context/stateReducer";
 import { useCollection } from "../contracts/hooks/useCollection";
 
-export default function Gallery() {
+export default function Gallery({ openNavbar }) {
   const { getMintedItemsData } = useCollection();
+  const [{ storedMintedItems }, stateDispatch] = useStateContext();
   const [mintedItems, setMintedItems] = useState([]);
   const [allMintedItems, setAllMintedItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [openFilters, setOpenFilters] = useState(false);
   const [filtersSelected, setFiltersSelected] = useState([]);
+
   useEffect(() => {
     const fetchData = async () => {
-      const items = await getMintedItemsData();
-      setAllMintedItems(items);
-      setMintedItems(items);
-      setLoading(false);
+      if (storedMintedItems?.length > 0) {
+        setAllMintedItems(storedMintedItems);
+        setMintedItems(storedMintedItems);
+        setLoading(false);
+      } else {
+        const items = await getMintedItemsData();
+        setAllMintedItems(items);
+        setMintedItems(items);
+        stateDispatch({ type: actionTypes.SET_MINTED_ITEMS, items: items });
+        setLoading(false);
+      }
     };
     fetchData();
   }, []);
@@ -47,6 +58,7 @@ export default function Gallery() {
                 filtersSelected={filtersSelected}
                 mintedItems={mintedItems}
                 setOpenSidebar={setOpenFilters}
+                openNavbar={openNavbar}
               />
             </>
           ) : (

@@ -1,20 +1,26 @@
 import React, { useEffect, useState } from "react";
 import tw from "tailwind-styled-components";
-export const GalleryInfo = ({ setOpenSidebar, selectedFilters }) => {
+export const GalleryInfo = ({
+  setOpenSidebar,
+  selectedFilters,
+  openNavbar,
+}) => {
   return (
-    <>
-      <GalleryInfoContainer>
-        <div className="text-xl uppercase font-extrabold tracking-tight">
-          Browse Xakusis
-        </div>
-        <GalleryInfoSummary>
-          <MyCollectionButton />
-          <RefreshButton />
-          <SmallFilterButton setOpenSidebar={setOpenSidebar} />
-        </GalleryInfoSummary>
-      </GalleryInfoContainer>
-      <FiltersInfo selectedFilters={selectedFilters} />
-    </>
+    !openNavbar && (
+      <>
+        <GalleryInfoContainer>
+          <div className="text-xl uppercase font-extrabold tracking-tight">
+            Browse Xakusis
+          </div>
+          <GalleryInfoSummary>
+            <MyCollectionButton />
+            <RefreshButton />
+            <SmallFilterButton setOpenSidebar={setOpenSidebar} />
+          </GalleryInfoSummary>
+        </GalleryInfoContainer>
+        <FiltersInfo selectedFilters={selectedFilters} />
+      </>
+    )
   );
 };
 
@@ -45,7 +51,7 @@ const FiltersInfo = ({ selectedFilters }) => {
   }, [selectedFilters]);
 
   return (
-    <div className=" mb- text-black dark:text-white">
+    <div className=" z-1 text-black dark:text-white">
       <div className="lg:h-20 h-16 lg:pt-5 overflow-x-auto mx-auto hide-scrollbar flex items-center">
         <h3 className="text-xs flex pr-2 items-center font-semibold uppercase tracking-wide opacity-50">
           Filters
